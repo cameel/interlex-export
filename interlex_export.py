@@ -209,15 +209,15 @@ def print_metadata(metadata):
     print("Answers (correct/all): {}/{}".format(metadata.questions_answered_correctly, metadata.questions_attempted))
     print("Comments:              {}".format(metadata.comments))
 
-def generate_csv(entries):
+def generate_csv(entries, include_header):
     assert all(isinstance(entry, InterlexEntry) for entry in entries)
 
     csv_output = StringIO()
     writer     = csv.writer(csv_output, dialect = CSV_DIALECT, delimiter = CSV_DELIMITER)
 
-    header = InterlexEntry._fields
-
-    writer.writerow(header)
+    if include_header:
+        header = InterlexEntry._fields
+        writer.writerow(header)
 
     for entry in entries:
         writer.writerow(entry)
@@ -245,6 +245,11 @@ def parse_command_line():
         type     = str,
         required = True,
     )
+    parser.add_argument('--no-header',
+        help     = "Don't include header in the CSV file",
+        dest     = 'include_csv_header',
+        action   = 'store_false',
+    )
 
     return parser.parse_args()
 
@@ -265,4 +270,4 @@ if __name__ == '__main__':
 
     all_entries = list(chain(*entry_sets))
     print("Saving all {} entries in {}".format(len(all_entries), command_line_options.output_file_path))
-    save_file(command_line_options.output_file_path, generate_csv(all_entries))
+    save_file(command_line_options.output_file_path, generate_csv(all_entries, include_header = command_line_options.include_csv_header))
