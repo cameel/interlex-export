@@ -14,6 +14,7 @@ InterlexEntry = namedtuple('InterlexEntry', [
     'translation',
     'review_order',
     'penalty_points',
+    'interlex_order',
     'file_description',
 ])
 
@@ -158,7 +159,7 @@ def parse(input_file_path, file_format):
     with open(input_file_path, 'rb') as input_file:
         return file_format.parse(input_file.read())
 
-def prepare_data_for_export(input_file_path, parsed_file):
+def prepare_data_for_export(input_file_path, parsed_file, interlex_order_base):
     metadata = InterlexMetadata(
         input_file_path              = input_file_path,
         program_and_version          = parsed_file.program_and_version.decode(METADATA_ENCODING),
@@ -187,9 +188,10 @@ def prepare_data_for_export(input_file_path, parsed_file):
             translation      = entry.translation.decode(native_encoding),
             review_order     = entry.review_order,
             penalty_points   = entry.penalty_points,
+            interlex_order   = interlex_order_base + i,
             file_description = metadata.description,
         )
-        for entry in parsed_file.entry
+        for (i, entry) in enumerate(parsed_file.entry)
     ]
 
     return (metadata, entries)
@@ -259,15 +261,17 @@ if __name__ == '__main__':
 
     file_format = build_interlex_format()
 
-    entry_sets = []
+    entry_sets          = []
+    interlex_order_base = 0
     for input_file_path in command_line_options.input_file_paths:
         parsed_file       = parse(input_file_path, file_format)
-        metadata, entries = prepare_data_for_export(input_file_path, parsed_file)
+        metadata, entries = prepare_data_for_export(input_file_path, parsed_file, interlex_order_base)
 
         print_metadata(metadata)
         print()
 
         entry_sets.append(entries)
+        interlex_order_base += len(entries)
 
     all_entries = list(chain(*entry_sets))
     print("Saving all {} entries in {}".format(len(all_entries), command_line_options.output_file_path))
