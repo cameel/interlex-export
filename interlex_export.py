@@ -12,7 +12,7 @@ InterlexEntry = namedtuple('InterlexEntry', [
     'part_of_speech',
     'notes',
     'translation',
-    'counter',
+    'review_order',
     'penalty_points',
     'file_description',
 ])
@@ -139,12 +139,12 @@ def build_interlex_format():
                 PascalString('part_of_speech', length_field = ULInt16('length')),
                 PascalString('notes',          length_field = ULInt16('length')),
                 PascalString('translation',    length_field = ULInt16('length')),
-                # Every time a word gets tested, this field is set to the last value of the counter and the counter
+                # Every time a word gets tested, this field is set to the last value of the counter and the review_order counter
                 # is incremented. I think the purpose is to store the order in which the questions were last asked.
                 # Suprisingly, the value of the counter is remembered if you restart the program - it's not the highest
                 # of the values assigned to words.
                 # It's size is at least 2 bytes. It's most likely a 32-bit int.
-                SLInt32('counter'),
+                SLInt32('review_order'),
                 # I have never seen value other than zero in this field. It being a 32-bit int is just my guess.
                 SLInt32('unknown'),
                 # -1 seems to indicate that the word has been learnt (displayed as greyed out in the UI)
@@ -185,7 +185,7 @@ def prepare_data_for_export(input_file_path, parsed_file):
             part_of_speech   = entry.part_of_speech.decode(native_encoding),
             notes            = entry.notes.decode(native_encoding),
             translation      = entry.translation.decode(native_encoding),
-            counter          = entry.counter,
+            review_order     = entry.review_order,
             penalty_points   = entry.penalty_points,
             file_description = metadata.description,
         )
