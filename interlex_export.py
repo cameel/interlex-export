@@ -12,7 +12,8 @@ InterlexEntry = namedtuple('InterlexEntry', [
     'notes',
     'translation',
     'counter',
-    'penalty_points'
+    'penalty_points',
+    'file_description',
 ])
 
 InterlexMetadata = namedtuple('InterlexMetadata', [
@@ -179,12 +180,13 @@ def prepare_data_for_export(input_file_path, parsed_file):
 
     entries = [
         InterlexEntry(
-            word           = entry.word.decode(foreign_encoding),
-            part_of_speech = entry.part_of_speech.decode(native_encoding),
-            notes          = entry.notes.decode(native_encoding),
-            translation    = entry.translation.decode(native_encoding),
-            counter        = entry.counter,
-            penalty_points = entry.penalty_points,
+            word             = entry.word.decode(foreign_encoding),
+            part_of_speech   = entry.part_of_speech.decode(native_encoding),
+            notes            = entry.notes.decode(native_encoding),
+            translation      = entry.translation.decode(native_encoding),
+            counter          = entry.counter,
+            penalty_points   = entry.penalty_points,
+            file_description = metadata.description,
         )
         for entry in parsed_file.entry
     ]
