@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 from io          import StringIO
 from collections import namedtuple
 from itertools   import chain
