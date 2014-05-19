@@ -177,7 +177,7 @@ def prepare_data_for_export(input_file_path, parsed_file, interlex_order_base):
         questions_answered_correctly = parsed_file.questions_answered_correctly,
     )
 
-    foreign_encoding = LANGUAGES[parsed_file.native_language_id].codepage
+    foreign_encoding = LANGUAGES[parsed_file.foreign_language_id].codepage
     native_encoding  = LANGUAGES[parsed_file.native_language_id].codepage
 
     entries = [
